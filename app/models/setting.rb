@@ -1,1 +1,0 @@
-class Setting < ApplicationRecord ; end
