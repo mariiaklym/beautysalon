@@ -83,6 +83,7 @@ export default class Users extends React.Component {
             <table className='dark' style={{marginTop: 20 + 'px'}}>
               <thead>
               <tr>
+                <th><h1>Майстер</h1></th>
                 <th><h1>Послуги</h1></th>
                 <th><h1>Сума</h1></th>
                 <th><h1>Статус</h1></th>
@@ -94,6 +95,7 @@ export default class Users extends React.Component {
               {this.state.user.reservations.map((action, i) => {
                 return (
                   <tr key={i}>
+                    <td>{action.worker}</td>
                     <td>
                       { action.services.map((s, i) => {
                         return (

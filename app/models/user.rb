@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  enum role: [:client, :admin]
+  enum role: [:client, :admin, :worker]
 
   has_many :reservations
 

@@ -15,7 +15,9 @@ export default class Reservations extends React.Component {
     moment.locale('uk');
 
     this.state = {
+      current_user: this.props.current_user,
       users: this.props.users,
+      workers: this.props.workers,
       reservations: this.props.reservations,
       openedModal: '',
       selectedDate: new Date(),
@@ -25,6 +27,7 @@ export default class Reservations extends React.Component {
       holidays: this.props.holidays,
       selectedReservation: {
         user: {},
+        worker: {},
         status: '',
         description: '',
         date: '',
@@ -60,6 +63,7 @@ export default class Reservations extends React.Component {
         selectedReservation: {
           id: '',
           user: {},
+          worker: {},
           status: '',
           description: '',
           date: '',
@@ -136,6 +140,7 @@ export default class Reservations extends React.Component {
         data: {
           reservation: {
             user_id: this.state.selectedReservation.user.value,
+            worker_id: this.state.selectedReservation.worker.value || this.state.current_user.id,
             status: this.state.selectedReservation.status,
             description: this.state.selectedReservation.description,
             start_date: this.state.selectedReservation.date + ' ' + moment(this.state.selectedReservation.startTime).format('HH:mm'),
@@ -153,6 +158,7 @@ export default class Reservations extends React.Component {
             selectedReservation: {
               id: '',
               user: {},
+              worker: {},
               status: '',
               description: '',
               date: '',
@@ -176,6 +182,7 @@ export default class Reservations extends React.Component {
       selectedReservation: {
         id: reservation.id,
         user: reservation.user,
+        worker: reservation.worker,
         status: reservation.status,
         description: reservation.description,
         date: moment(reservation.start).format('DD.MM.YYYY'),
@@ -197,6 +204,16 @@ export default class Reservations extends React.Component {
     });
   };
 
+  handleReservationWorkerChange = (worker) => {
+    this.setState({
+      ...this.state,
+      selectedReservation: {
+        ...this.state.selectedReservation,
+        worker: worker
+      }
+    });
+  };
+
   handleDeleteReservation = () => {
     if (confirm('Видалити запис?')) {
       $.ajax({
@@ -211,6 +228,7 @@ export default class Reservations extends React.Component {
             selectedReservation: {
               id: '',
               user: {},
+              worker: {},
               status: '',
               description: '',
               date: '',
@@ -310,6 +328,8 @@ export default class Reservations extends React.Component {
       });
     };
 
+    console.log('state', this.state)
+
     return (
       <div style={{marginTop: '150'+'px', padding: 10+'px'}}>
         <NotificationContainer/>
@@ -338,6 +358,15 @@ export default class Reservations extends React.Component {
               <i className="fa fa-times" onClick={() => this.handleModal('')}/>
             </ModalHeader>
             <div className='reservation-form'>
+              { this.state.current_user.role !== 'worker' &&
+                <div className='form-group'>
+                  <label><strong>Майстер</strong></label>
+                  <Select options={this.state.workers}
+                          defaultValue={this.state.selectedReservation.worker}
+                          onChange={this.handleReservationWorkerChange}
+                          placeholder="Вибрати майстра"
+                  />
+                </div>}
               <div className='form-group'>
                 <label><strong>Клієнт</strong></label>
                 <Select options={this.state.users}

@@ -109,6 +109,7 @@ export default class Table extends React.Component {
         <table className='dark' style={{marginTop: 20 + 'px'}}>
           <thead>
           <tr>
+            <th><h1>Майстер</h1></th>
             <th><h1>Клієнт</h1></th>
             <th><h1>Сума</h1></th>
             <th><h1>Статус</h1></th>
@@ -121,6 +122,7 @@ export default class Table extends React.Component {
           { this.state.actions.map((action, i) => {
             return (
               <tr key={i}>
+                <td><a style={{color: '#FB667A'}} href={`/users?id=${action.worker.id}`}>{action.worker.name}</a></td>
                 <td><a style={{color: '#FB667A'}} href={`/users?id=${action.user.id}`}>{action.user.name}</a></td>
                 <td>{action.price}<span className='uah'>₴</span></td>
                 <td style={{color: this.status(action.status) && this.status(action.status)['color']}}>{this.status(action.status) && this.status(action.status)['translate']}</td>

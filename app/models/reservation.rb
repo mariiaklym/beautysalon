@@ -1,5 +1,6 @@
 class Reservation < ApplicationRecord
   belongs_to :user
+  belongs_to :worker, class_name: 'User', foreign_key: :worker_id
   has_and_belongs_to_many :services
 
   enum status: [:paid, :not_paid, :partialy_paid, :free]
@@ -12,6 +13,15 @@ class Reservation < ApplicationRecord
   scope :current_month, -> {where('start_date < ? AND end_date > ?', DateTime.now.end_of_month, DateTime.now.beginning_of_month).order('start_date DESC')}
   scope :for_dates, -> (start_date, end_date) {where('start_date <= ? AND end_date >= ?', end_date || DateTime.now.end_of_month, start_date || DateTime.now.beginning_of_month).order('start_date DESC')}
   scope :for_status, -> (status) {where(status: status) if status.present?}
+  scope :for_worker, -> (user) do
+    if user.admin?
+      all
+    elsif user.worker?
+      where(worker: user)
+    else
+      Reservation.none
+    end
+  end
 
   private
 

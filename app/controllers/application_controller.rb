@@ -7,7 +7,8 @@ class ApplicationController < ActionController::Base
   PER = 10
 
   def check_admin
-    render nothing: true, status: 204 and return if !current_user.admin?
+    @current_user = current_user
+    render nothing: true, status: 204 and return if !(current_user.admin? || current_user.worker?)
   end
 
   def after_sign_in_path_for(resource)

@@ -2,7 +2,7 @@ class ReservationsController < ApplicationController
   before_action :check_admin
 
   def index
-    @reservations = Reservation.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
+    @reservations = Reservation.for_worker(current_user).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
       { id: reservation.id,
         title: reservation.user.name,
         description: reservation.description,
@@ -18,12 +18,20 @@ class ReservationsController < ApplicationController
             label: reservation.user.name,
             value: reservation.user.id
         },
+        worker: {
+            id: reservation.worker.id,
+            value: reservation.worker.id,
+            name: reservation.worker.name,
+            label: reservation.worker.name,
+            phone: reservation.worker.phone,
+        },
         services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
       }
     end
     @notices_counts = Notice.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).group(:date).count.keys.map {|d| d.strftime("%d.%m.%Y")}
     @services = Service.all.map {|s| {id: s.id, name: s.name, price: s.price}}
-    @users = User.all.map { |user| {label: user.name, value: user.id} }
+    @users = User.client.map { |user| {label: user.name, value: user.id} }
+    @workers = User.worker.map { |user| {label: user.name, value: user.id} }
     @holidays = Holiday.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map { |day| day.date.strftime('%d.%m.%Y') }
     respond_to do |format|
       format.html { render :index }
@@ -35,7 +43,7 @@ class ReservationsController < ApplicationController
     reservation = Reservation.new(reservation_params)
     if reservation.save
       render json: {success: true,
-        reservations: Reservation.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
+        reservations: Reservation.for_worker(current_user).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
           { id: reservation.id,
             title: reservation.user.name,
             description: reservation.description,
@@ -50,6 +58,11 @@ class ReservationsController < ApplicationController
                 phone: reservation.user.phone,
                 label: reservation.user.name,
                 value: reservation.user.id
+            },
+            worker: {
+                id: reservation.worker.id,
+                name: reservation.worker.name,
+                phone: reservation.worker.phone,
             },
             services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
           }
@@ -64,7 +77,7 @@ class ReservationsController < ApplicationController
     reservation = Reservation.find(params[:id])
     if reservation.update(reservation_params)
       render json: {success: true, update: true,
-        reservations: Reservation.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
+        reservations: Reservation.for_worker(current_user).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
           { id: reservation.id,
             title: reservation.user.name,
             description: reservation.description,
@@ -80,6 +93,11 @@ class ReservationsController < ApplicationController
                 label: reservation.user.name,
                 value: reservation.user.id
             },
+            worker: {
+                id: reservation.worker.id,
+                name: reservation.worker.name,
+                phone: reservation.worker.phone,
+            },
             services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
           }
         end
@@ -93,7 +111,7 @@ class ReservationsController < ApplicationController
     reservation = Reservation.find(params[:id])
     reservation.destroy
     render json: {success: true,
-      reservations: Reservation.for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
+      reservations: Reservation.for_worker(current_user).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
         { id: reservation.id,
           title: reservation.user.name,
           description: reservation.description,
@@ -109,6 +127,11 @@ class ReservationsController < ApplicationController
               label: reservation.user.name,
               value: reservation.user.id
           },
+          worker: {
+              id: reservation.worker.id,
+              name: reservation.worker.name,
+              phone: reservation.worker.phone,
+          },
           services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
         }
       end
@@ -116,7 +139,7 @@ class ReservationsController < ApplicationController
   end
 
   def table
-    @reservations = Reservation.for_status(params[:status]).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
+    @reservations = Reservation.for_worker(current_user).for_status(params[:status]).for_dates(params[:start_date].try(:to_datetime).try(:beginning_of_day), params[:end_date].try(:to_datetime).try(:end_of_day)).map do |reservation|
       { id: reservation.id,
         title: reservation.user.name,
         description: reservation.description,
@@ -130,6 +153,11 @@ class ReservationsController < ApplicationController
             id: reservation.user.id,
             name: reservation.user.name,
             phone: reservation.user.phone,
+        },
+        worker: {
+            id: reservation.worker.id,
+            name: reservation.worker.name,
+            phone: reservation.worker.phone,
         },
         services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
       }
@@ -146,6 +174,6 @@ class ReservationsController < ApplicationController
   private
 
   def reservation_params
-    params.require(:reservation).permit(:user_id, :start_date, :end_date, :description, :status, :price, service_ids: [])
+    params.require(:reservation).permit(:user_id, :worker_id, :start_date, :end_date, :description, :status, :price, service_ids: [])
   end
 end

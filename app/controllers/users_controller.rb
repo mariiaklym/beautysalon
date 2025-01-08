@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_action :set_user, only: :show
 
   def index
-    @users = User.all.map do |user|
+    @users = User.client.map do |user|
       { name:  user.name,
         id:    user.id,
         phone: user.phone,
@@ -45,6 +45,7 @@ class UsersController < ApplicationController
         reservations: reservations.map do |reservation|
           { id: reservation.id,
             name: reservation.user.name,
+            worker: reservation.worker.name,
             description: reservation.description,
             status: reservation.status,
             start: reservation.start_date.strftime('%d.%m.%Y %H:%M'),
