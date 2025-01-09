@@ -5,27 +5,29 @@
 
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <%= link_to "Головна", root_path, class: 'nav-link' %>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto">
       <% if signed_in? %>
         <li class="nav-item">
-          <a class="nav-link" href="/table">Записи</a>
+          <%= link_to current_user&.client? ? "Мої записи" : "Головна",
+                      current_user&.client? ? service_requests_path : root_path, class: 'nav-link'
+          %>
         </li>
+      <% end %>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      <% if !(current_user&.admin? || current_user&.worker?) %>
         <li class="nav-item">
-          <a class="nav-link" href="/users">Клієнти</a>
+          <%= link_to "Записатися", new_service_request_path, class: 'nav-link' %>
         </li>
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link" href="/products/expense">Списання</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link" href="/products">Товари</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link" href="/actions">Продажі</a>-->
-<!--        </li>-->
+      <% end %>
+      <% if signed_in? %>
+        <% unless current_user.client? %>
+          <li class="nav-item">
+            <a class="nav-link" href="/table">Записи</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/users">Клієнти</a>
+          </li>
+        <% end %>
         <li class="nav-item">
           <%= link_to "Профіль", edit_user_registration_path, class: 'nav-link' %>
         </li>

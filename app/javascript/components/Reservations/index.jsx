@@ -358,7 +358,7 @@ export default class Reservations extends React.Component {
               <i className="fa fa-times" onClick={() => this.handleModal('')}/>
             </ModalHeader>
             <div className='reservation-form'>
-              { this.state.current_user.role !== 'worker' &&
+              { this.state.current_user.role === 'admin' &&
                 <div className='form-group'>
                   <label><strong>Майстер</strong></label>
                   <Select options={this.state.workers}

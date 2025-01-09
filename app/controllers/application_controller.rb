@@ -12,7 +12,11 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    edit_user_registration_path
+    if resource.client?
+      service_requests_path
+    else
+      root_path
+    end
   end
 
   protected

@@ -39,6 +39,10 @@ class ReservationsController < ApplicationController
     end
   end
 
+  def show
+    @reservation = Reservation.find_by_id(params[:id])
+  end
+
   def create
     reservation = Reservation.new(reservation_params)
     if reservation.save
@@ -61,7 +65,9 @@ class ReservationsController < ApplicationController
             },
             worker: {
                 id: reservation.worker.id,
+                value: reservation.worker.id,
                 name: reservation.worker.name,
+                label: reservation.worker.name,
                 phone: reservation.worker.phone,
             },
             services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
@@ -95,7 +101,9 @@ class ReservationsController < ApplicationController
             },
             worker: {
                 id: reservation.worker.id,
+                value: reservation.worker.id,
                 name: reservation.worker.name,
+                label: reservation.worker.name,
                 phone: reservation.worker.phone,
             },
             services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
@@ -129,7 +137,9 @@ class ReservationsController < ApplicationController
           },
           worker: {
               id: reservation.worker.id,
+              value: reservation.worker.id,
               name: reservation.worker.name,
+              label: reservation.worker.name,
               phone: reservation.worker.phone,
           },
           services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
@@ -156,14 +166,16 @@ class ReservationsController < ApplicationController
         },
         worker: {
             id: reservation.worker.id,
+            value: reservation.worker.id,
             name: reservation.worker.name,
+            label: reservation.worker.name,
             phone: reservation.worker.phone,
         },
         services: reservation.services.map { |service| { id: service.id, name: service.name, price: service.price } }
       }
     end
     @services = Service.all.map {|s| {id: s.id, name: s.name, price: s.price}}
-    @users = User.all.map { |user| {label: user.name, value: user.id} }
+    @users = User.client.map { |user| {label: user.name, value: user.id} }
     @statuses = Reservation.statuses
     respond_to do |format|
       format.html { render :table }

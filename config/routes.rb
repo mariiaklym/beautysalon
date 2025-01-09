@@ -8,12 +8,7 @@ Rails.application.routes.draw do
   resources :reservations
   resources :users, only: [:index, :show]
   resources :notices, only: [:index, :create, :destroy]
-  resources :service_requests, only: [:create, :new, :show]
+  resources :service_requests, only: [:index, :create, :new]
 
   get '/table', to: 'reservations#table'
-  get '/sell', to: 'pages#sell'
-  get '/copy_db', to: 'application#copy_db'
-  get '/update_db', to: 'application#update_db'
-
-  post '/barcode', to: 'api#barcode'
 end
