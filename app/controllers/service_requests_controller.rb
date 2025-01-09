@@ -87,6 +87,7 @@ class ServiceRequestsController < ApplicationController
   end
 
   def new
+    @current_user = current_user
     @services = Service.all.map { |service| { id: service.id, name: service.name, price: service.price } }
     @workers = User.worker.map { |user| {label: user.name, value: user.id} }
   end

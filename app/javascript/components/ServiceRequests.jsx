@@ -147,43 +147,44 @@ export default class ServiceRequests extends React.Component {
         <div className="container">
             <h1 className='mb-5'><strong>Запис на прийом</strong></h1>
           <div className='reservation-form'>
-            <div className='card mb-5'>
-              <div className='card-body'>
-                <h1 className='mb-5'>Ваші дані</h1>
-                <FormGroup>
-                  <div className='service-block'>
-                    <Label>Email</Label>
-                    <Input value={this.state.selectedReservation.user.email}
-                           onChange={(v) => this.handleReservationUserChange('email', v)}
-                    />
-                  </div>
-                </FormGroup>
-                <FormGroup>
-                  <div className='service-block'>
-                    <Label>Ім'я</Label>
-                    <Input value={this.state.selectedReservation.user.name}
-                           onChange={(v) => this.handleReservationUserChange('name', v)}
-                    />
-                  </div>
-                </FormGroup>
-                <FormGroup>
-                  <div className='service-block'>
-                    <Label>Телефон</Label>
-                    <Input value={this.state.selectedReservation.user.phone}
-                           onChange={(v) => this.handleReservationUserChange('phone', v)}
-                    />
-                  </div>
-                </FormGroup>
-                <FormGroup>
-                  <div className='service-block'>
-                    <Label>Пароль</Label>
-                    <Input value={this.state.selectedReservation.user.password} type='password'
-                           onChange={(v) => this.handleReservationUserChange('password', v)}
-                    />
-                  </div>
-                </FormGroup>
-              </div>
-            </div>
+            { !this.props.current_user &&
+              <div className='card mb-5'>
+                <div className='card-body'>
+                  <h1 className='mb-5'>Ваші дані</h1>
+                  <FormGroup>
+                    <div className='service-block'>
+                      <Label>Email</Label>
+                      <Input value={this.state.selectedReservation.user.email}
+                             onChange={(v) => this.handleReservationUserChange('email', v)}
+                      />
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <div className='service-block'>
+                      <Label>Ім'я</Label>
+                      <Input value={this.state.selectedReservation.user.name}
+                             onChange={(v) => this.handleReservationUserChange('name', v)}
+                      />
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <div className='service-block'>
+                      <Label>Телефон</Label>
+                      <Input value={this.state.selectedReservation.user.phone}
+                             onChange={(v) => this.handleReservationUserChange('phone', v)}
+                      />
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <div className='service-block'>
+                      <Label>Пароль</Label>
+                      <Input value={this.state.selectedReservation.user.password} type='password'
+                             onChange={(v) => this.handleReservationUserChange('password', v)}
+                      />
+                    </div>
+                  </FormGroup>
+                </div>
+              </div>}
             <div className='card mb-5'>
               <div className='card-body'>
                 <h1 className='mb-5'>Дані резервування</h1>
